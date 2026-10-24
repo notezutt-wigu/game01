@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Sky Aim Jumper - เกมที่ 1 กระโดดไต่ฟ้าจัดอันดับ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-container">
+    <!-- แผงด้านซ้าย: สลับเกม ข้อมูลผู้เล่น วิธีเล่น และตารางจัดอันดับ -->
+    <aside class="sidebar">
+      <!-- แถบนำทาง: หน้ารวมเกมส์ / เกม 1 / เกม 2 -->
+      <nav class="game-switcher three-tabs">
+        <a href="index.html" class="switch-tab hub-tab">
+          <span class="tab-icon">🏠</span>
+          <div class="tab-text">
+            <small>ARCADE HUB</small>
+            <strong>หน้ารวมเกมส์</strong>
+          </div>
+        </a>
+        <a href="game1.html" class="switch-tab active">
+          <span class="tab-icon">🚀</span>
+          <div class="tab-text">
+            <small>GAME 01</small>
+            <strong>Sky Jumper</strong>
+          </div>
+        </a>
+        <a href="game2.html" class="switch-tab">
+          <span class="tab-icon">⚡</span>
+          <div class="tab-text">
+            <small>GAME 02</small>
+            <strong>Cyber Overdrive</strong>
+          </div>
+        </a>
+      </nav>
+
+      <div class="brand-card">
+        <div class="brand-icon">🚀</div>
+        <div>
+          <h1>SKY AIM JUMPER</h1>
+          <p>เล็งองศา กระโดดหนีแท่นไหล! <span id="lanBadge" class="lan-mini-badge">LAN Ready</span></p>
+        </div>
+      </div>
+
+      <!-- ข้อมูลผู้เล่นที่ล็อกอินอยู่ -->
+      <div id="userPanel" class="card user-panel hidden">
+        <div class="user-header">
+          <div>
+            <span class="badge">ผู้เล่นปัจจุบัน</span>
+            <h2 id="currentUsername">-</h2>
+          </div>
+          <button id="logoutBtn" class="btn btn-outline btn-sm" title="เปลี่ยนบัญชีผู้เล่น">ออกจากระบบ</button>
+        </div>
+        <div class="stats-row">
+          <div class="stat-box">
+            <span class="stat-label">คะแนนสูงสุดของคุณ</span>
+            <span id="userBestScore" class="stat-value highlight">0</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">อันดับในวง LAN</span>
+            <span id="userRank" class="stat-value">#-</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- วิธีบังคับ -->
+      <div class="card controls-card">
+        <h3>🎮 วิธีบังคับ</h3>
+        <ul class="control-list">
+          <li>
+            <div class="key-group">
+              <kbd>←</kbd> <kbd>→</kbd>
+            </div>
+            <span>หมุนลูกศรเล็งทิศทางที่จะกระโดด</span>
+          </li>
+          <li>
+            <div class="key-group">
+              <kbd class="key-w">W</kbd>
+            </div>
+            <span>กดเพื่อ <strong>กระโดด</strong> พุ่งไปตามลูกศร</span>
+          </li>
+        </ul>
+        <div class="warning-tip">
+          ⚠️ <strong>ระวัง!</strong> แท่นเหยียบจะไหลลงมาเรื่อยๆ ต้องรีบเล็งและกระโดดขึ้นไปให้ทัน ถ้าตกขอบล่างคือตายทันที!
+        </div>
+      </div>
+
+      <!-- ตารางจัดอันดับ (Leaderboard) -->
+      <div class="card leaderboard-card">
+        <div class="leaderboard-header">
+          <h3>🏆 อันดับสูงสุด (LAN)</h3>
+          <span id="totalPlayersBadge" class="player-count">0 คน</span>
+        </div>
+        <div id="leaderboardList" class="leaderboard-list">
+          <!-- รายชื่ออันดับจะถูกสร้างด้วย JS -->
+        </div>
+      </div>
+    </aside>
+
+    <!-- พื้นที่หน้าจอเกมหลัก -->
+    <main class="game-stage">
+      <div class="canvas-wrapper">
+        <!-- แถบคะแนนด้านบนจอเกม -->
+        <div class="hud-bar">
+          <div class="hud-item">
+            <span class="hud-label">คะแนน</span>
+            <span id="hudScore" class="hud-number">0</span>
+          </div>
+          <div class="hud-item">
+            <span class="hud-label">ความเร็วแท่น</span>
+            <span id="hudSpeed" class="hud-number speed-tag">1.0x</span>
+          </div>
+          <div class="hud-item">
+            <span class="hud-label">สถิติสูงสุด</span>
+            <span id="hudBest" class="hud-number best-tag">0</span>
+          </div>
+        </div>
+
+        <canvas id="gameCanvas" width="480" height="720"></canvas>
+
+        <!-- ปุ่มควบคุมบนหน้าจอสำหรับมือถือ / แท็บเล็ตในวง LAN -->
+        <div class="touch-controls">
+          <div class="touch-left-right">
+            <button id="touchLeftBtn" class="touch-btn" type="button">◀ เล็งซ้าย</button>
+            <button id="touchRightBtn" class="touch-btn" type="button">เล็งขวา ▶</button>
+          </div>
+          <button id="touchJumpBtn" class="touch-btn touch-jump" type="button">🚀 กระโดด (W)</button>
+        </div>
+
+        <!-- หน้าจอล็อกอิน / ลงทะเบียน (ใส่ชื่อ + รหัสผ่าน) -->
+        <div id="authModal" class="overlay-modal">
+          <div class="modal-box">
+            <div class="modal-icon">🔐</div>
+            <h2>เข้าสู่ระบบ / ตั้งชื่อผู้เล่น</h2>
+            <p class="modal-desc">
+              พิมพ์ <strong>ชื่อผู้เล่น</strong> และ <strong>รหัสผ่าน</strong><br/>
+              <small>(ซิงค์คะแนนร่วมกับเพื่อนทุกเครื่องในวง LAN อัตโนมัติ!)</small>
+            </p>
+            <form id="authForm" autocomplete="off">
+              <div class="form-group">
+                <label for="usernameInput">ชื่อผู้เล่น (Username)</label>
+                <input
+                  type="text"
+                  id="usernameInput"
+                  placeholder="เช่น เทพกระโดด, JumpMaster"
+                  maxlength="16"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="passwordInput">รหัสผ่าน (Password)</label>
+                <input
+                  type="password"
+                  id="passwordInput"
+                  placeholder="ตั้งรหัสผ่าน หรือใส่รหัสเดิมของคุณ"
+                  maxlength="24"
+                  required
+                />
+              </div>
+              <div id="authError" class="error-msg hidden"></div>
+              <button type="submit" class="btn btn-primary btn-block">
+                เข้าสู่เกมเลย! 🚀
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- หน้าจอพร้อมเริ่มเกม (หลังล็อกอินแล้ว) -->
+        <div id="startModal" class="overlay-modal hidden">
+          <div class="modal-box">
+            <div class="modal-icon">🎯</div>
+            <h2>พร้อมลุยหรือยัง <span id="welcomeName" class="accent-text"></span>!</h2>
+            <p class="modal-desc">
+              ใช้ปุ่ม <kbd>←</kbd> <kbd>→</kbd> หมุนลูกศรเล็งทิศทาง<br/>
+              แล้วกด <kbd class="key-w">W</kbd> เพื่อกระโดดขึ้นไปบนแท่นที่ไหลลงมา!
+            </p>
+            <button id="startGameBtn" class="btn btn-primary btn-block">
+              เริ่มกระโดด! (หรือกด W)
+            </button>
+          </div>
+        </div>
+
+        <!-- หน้าจอ Game Over -->
+        <div id="gameOverModal" class="overlay-modal hidden">
+          <div class="modal-box">
+            <div class="modal-icon">💥</div>
+            <h2>ร่วงตกขอบ! GAME OVER</h2>
+            <div id="newRecordBanner" class="new-record-banner hidden">
+              🎉 ทำลายสถิติใหม่ของคุณ! 🎉
+            </div>
+            <div class="result-grid">
+              <div class="result-item">
+                <span>คะแนนรอบนี้</span>
+                <strong id="finalScore">0</strong>
+              </div>
+              <div class="result-item">
+                <span>สถิติสูงสุดของคุณ</span>
+                <strong id="finalBest">0</strong>
+              </div>
+            </div>
+            <div style="display: flex; gap: 10px;">
+              <button id="restartGameBtn" class="btn btn-primary" style="flex: 2;">
+                เล่นอีกครั้ง! (Space)
+              </button>
+              <a href="index.html" class="btn btn-outline" style="flex: 1; text-decoration: none; display: flex; align-items: center; justify-content: center;">
+                🏠 รวมเกม
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="lan_sync.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

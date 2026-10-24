@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ANTI ARCADE HUB - ศูนย์รวมเกมอาเขต & แข่งจัดอันดับผ่าน LAN</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070913;
+      --bg-card: rgba(22, 28, 49, 0.85);
+      --border-color: rgba(148, 163, 184, 0.18);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --cyan: #38bdf8;
+      --pink: #f43f5e;
+      --purple: #a855f7;
+      --gold: #facc15;
+      --green: #4ade80;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Kanit', sans-serif;
+      background:
+        radial-gradient(circle at 15% 15%, rgba(37, 99, 235, 0.28) 0%, transparent 45%),
+        radial-gradient(circle at 85% 20%, rgba(225, 29, 72, 0.25) 0%, transparent 45%),
+        #070913;
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 24px 16px 48px;
+    }
+
+    .hub-container {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* Top Header & LAN Banner */
+    .hub-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 20px 24px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+    }
+
+    .brand-title {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand-logo {
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #2563eb, #e11d48);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      box-shadow: 0 8px 24px rgba(225, 29, 72, 0.35);
+    }
+
+    .brand-title h1 {
+      font-size: 1.65rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      background: linear-gradient(90deg, #38bdf8, #f43f5e, #facc15);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-title p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    /* LAN Info Box */
+    .lan-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      padding: 10px 16px;
+      border-radius: 14px;
+    }
+
+    .lan-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 10px var(--green);
+      flex-shrink: 0;
+    }
+
+    .lan-dot.offline {
+      background: #f59e0b;
+      box-shadow: 0 0 10px #f59e0b;
+    }
+
+    .lan-details {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .lan-details small {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .lan-url {
+      font-family: monospace;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--cyan);
+    }
+
+    .copy-btn {
+      background: rgba(56, 189, 248, 0.16);
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      color: #e0f2fe;
+      font-family: 'Kanit', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 7px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .copy-btn:hover {
+      background: rgba(56, 189, 248, 0.3);
+    }
+
+    /* User Auth Bar */
+    .account-bar {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 18px;
+      padding: 16px 22px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .auth-inline-form {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .auth-inline-form input {
+      background: #0b0f19;
+      border: 1px solid #334155;
+      color: #fff;
+      font-family: 'Kanit', sans-serif;
+      padding: 9px 14px;
+      border-radius: 10px;
+      font-size: 0.92rem;
+      outline: none;
+    }
+
+    .auth-inline-form input:focus {
+      border-color: var(--cyan);
+    }
+
+    .btn {
+      cursor: pointer;
+      font-family: 'Kanit', sans-serif;
+      font-weight: 700;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 18px;
+      font-size: 0.95rem;
+      transition: transform 0.12s, filter 0.15s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn-cyan {
+      background: linear-gradient(135deg, #38bdf8, #2563eb);
+      color: #fff;
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
+    }
+
+    .btn-pink {
+      background: linear-gradient(135deg, #f43f5e, #9333ea);
+      color: #fff;
+      box-shadow: 0 6px 20px rgba(244, 63, 94, 0.35);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid #475569;
+      color: #cbd5e1;
+      padding: 7px 14px;
+      font-size: 0.84rem;
+    }
+
+    /* Game Cards Grid */
+    .games-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .game-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 22px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.22s ease, box-shadow 0.22s ease;
+      position: relative;
+    }
+
+    .game-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .game-card.card-g1:hover {
+      border-color: rgba(56, 189, 248, 0.6);
+      box-shadow: 0 20px 45px rgba(37, 99, 235, 0.28);
+    }
+
+    .game-card.card-g2:hover {
+      border-color: rgba(244, 63, 94, 0.6);
+      box-shadow: 0 20px 45px rgba(244, 63, 94, 0.28);
+    }
+
+    .game-banner {
+      height: 175px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .banner-g1 {
+      background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 55%, #38bdf8 100%);
+    }
+
+    .banner-g2 {
+      background: linear-gradient(135deg, #190b28 0%, #9333ea 50%, #e11d48 100%);
+    }
+
+    .banner-badge {
+      align-self: flex-start;
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      padding: 4px 12px;
+      border-radius: 99px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+    }
+
+    .banner-icon-bg {
+      position: absolute;
+      right: 18px;
+      bottom: -10px;
+      font-size: 6.5rem;
+      opacity: 0.24;
+      transform: rotate(-12deg);
+      pointer-events: none;
+    }
+
+    .banner-title h2 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      text-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+    }
+
+    .banner-title p {
+      font-size: 0.92rem;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .game-body {
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      flex: 1;
+    }
+
+    .feature-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      font-size: 0.78rem;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 4px 10px;
+      border-radius: 99px;
+      color: #cbd5e1;
+    }
+
+    .game-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .game-stats-strip {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      background: rgba(9, 13, 22, 0.65);
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      margin-top: auto;
+    }
+
+    .strip-item span {
+      display: block;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .strip-item strong {
+      font-size: 1.15rem;
+      color: var(--gold);
+    }
+
+    /* Leaderboards Section */
+    .leaderboards-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .lb-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 20px;
+    }
+
+    .lb-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .lb-head h3 {
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .lb-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+
+    .lb-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(9, 13, 22, 0.6);
+      padding: 9px 14px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+    }
+
+    .lb-row.me {
+      border: 1px solid var(--cyan);
+      background: rgba(56, 189, 248, 0.14);
+    }
+
+    .lb-score {
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 860px) {
+      .games-grid,
+      .leaderboards-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="hub-container">
+    <!-- ส่วนหัวหน้ารวมเกมส์ & ลิงก์เข้าเล่นผ่าน LAN -->
+    <header class="hub-header">
+      <div class="brand-title">
+        <div class="brand-logo">🕹️</div>
+        <div>
+          <h1>ANTI ARCADE LAN HUB</h1>
+          <p>ศูนย์รวมเกมอาเขต เลือกเกมที่ชอบ แล้วแข่งทำลายสถิติร่วมกันในวง LAN!</p>
+        </div>
+      </div>
+
+      <div class="lan-box">
+        <div id="lanStatusDot" class="lan-dot"></div>
+        <div class="lan-details">
+          <small id="lanStatusLabel">ลิงก์สำหรับเครื่องอื่นในวง Wi-Fi / LAN เดียวกัน:</small>
+          <span id="lanUrlText" class="lan-url">http://192.168.10.129:8080</span>
+        </div>
+        <button id="copyLanBtn" class="copy-btn">📋 คัดลอกลิงก์</button>
+      </div>
+    </header>
+
+    <!-- แถบล็อกอินผู้เล่น (ล็อกอินครั้งเดียวเล่นได้ทั้ง 2 เกม) -->
+    <section class="account-bar">
+      <div id="guestBox" style="width: 100%;">
+        <form id="hubAuthForm" class="auth-inline-form" autocomplete="off">
+          <span>🔐 <strong>เข้าสู่ระบบผู้เล่น (ใช้ร่วมกันทั้ง 2 เกม):</strong></span>
+          <input type="text" id="hubUsername" placeholder="ชื่อผู้เล่น (Username)" maxlength="16" required />
+          <input type="password" id="hubPassword" placeholder="รหัสผ่าน (Password)" maxlength="24" required />
+          <button type="submit" class="btn btn-cyan">ล็อกอิน / สมัครออโต้ 🚀</button>
+          <span id="hubAuthError" style="color: #fca5a5; font-size: 0.85rem;"></span>
+        </form>
+      </div>
+
+      <div id="loggedBox" class="hidden" style="display: flex; align-items: center; justify-content: space-between; width: 100%; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <span style="color: var(--text-muted); font-size: 0.85rem;">ผู้เล่นที่ล็อกอินอยู่:</span>
+          <strong id="hubCurrentUser" style="font-size: 1.25rem; color: var(--cyan); margin-left: 6px;">-</strong>
+          <span style="font-size: 0.8rem; color: var(--green); margin-left: 10px;">✓ พร้อมลุยทุกเกมในระบบ</span>
+        </div>
+        <button id="hubLogoutBtn" class="btn btn-outline">เปลี่ยนบัญชีผู้เล่น</button>
+      </div>
+    </section>
+
+    <!-- การ์ดเลือกเกมทั้ง 2 เกม -->
+    <section class="games-grid">
+      <!-- GAME 01 -->
+      <article class="game-card card-g1">
+        <div class="game-banner banner-g1">
+          <span class="banner-badge">GAME 01 • AIM & JUMP</span>
+          <div class="banner-icon-bg">🚀</div>
+          <div class="banner-title">
+            <h2>SKY AIM JUMPER</h2>
+            <p>เล็งองศาเข็มทิศ กระโดดไต่ฟ้าหนีแท่นไหลมรณะ!</p>
+          </div>
+        </div>
+        <div class="game-body">
+          <div class="feature-tags">
+            <span class="tag">🎯 หมุนลูกศรเล็ง ← →</span>
+            <span class="tag">🚀 กด W กระโดด</span>
+            <span class="tag">📱 รองรับปุ่มทัชสกรีน</span>
+          </div>
+          <p class="game-desc">
+            กะจังหวะและองศาให้แม่นยำ กระโดดขึ้นไปบนแท่นที่ไหลลงมาเร็วขึ้นเรื่อยๆ เหยียบแท่นโบนัสสีทองเพื่อพุ่งทะยานทำคะแนนสูงสุด!
+          </p>
+          <div class="game-stats-strip">
+            <div class="strip-item">
+              <span>สถิติของคุณ (เกม 1)</span>
+              <strong id="myBestG1">0</strong>
+            </div>
+            <div class="strip-item">
+              <span>แชมป์อันดับ 1 ใน LAN</span>
+              <strong id="topChampG1">-</strong>
+            </div>
+          </div>
+          <a href="game1.html" class="btn btn-cyan" style="width: 100%; padding: 14px; font-size: 1.08rem;">
+            เข้าเล่น GAME 01 เลย! 🚀
+          </a>
+        </div>
+      </article>
+
+      <!-- GAME 02 -->
+      <article class="game-card card-g2">
+        <div class="game-banner banner-g2">
+          <span class="banner-badge">GAME 02 • ACTION SHOOTER</span>
+          <div class="banner-icon-bg">⚡</div>
+          <div class="banner-title">
+            <h2>CYBER OVERDRIVE</h2>
+            <p>ยิงถล่มฝูงจักรกล พุ่งทะลวง บอสไฟต์สุดเดือด!</p>
+          </div>
+        </div>
+        <div class="game-body">
+          <div class="feature-tags">
+            <span class="tag">🔫 อัปเกรดปืน 6 ชนิด</span>
+            <span class="tag">⚡ พุ่งหลบ Cyber Dash</span>
+            <span class="tag">👾 บอสใหญ่ทุก 3 Wave</span>
+          </div>
+          <p class="game-desc">
+            เคลื่อนที่ 360 องศาหลบห่ากระสุน เก็บกล่องอัปเกรดปืนกระจาย เลเซอร์ มิสไซล์นำวิถี และปล่อยท่าไม้ตาย EMP Overdrive ล้างบางทั้งจอ!
+          </p>
+          <div class="game-stats-strip">
+            <div class="strip-item">
+              <span>สถิติของคุณ (เกม 2)</span>
+              <strong id="myBestG2">0</strong>
+            </div>
+            <div class="strip-item">
+              <span>แชมป์อันดับ 1 ใน LAN</span>
+              <strong id="topChampG2">-</strong>
+            </div>
+          </div>
+          <a href="game2.html" class="btn btn-pink" style="width: 100%; padding: 14px; font-size: 1.08rem;">
+            เข้าเล่น GAME 02 เลย! 🔥
+          </a>
+        </div>
+      </article>
+    </section>
+
+    <!-- ตารางจัดอันดับสดของทั้ง 2 เกม -->
+    <section class="leaderboards-grid">
+      <div class="lb-card">
+        <div class="lb-head">
+          <h3>🏆 ตารางอันดับ GAME 01: Sky Aim Jumper</h3>
+          <span id="countG1" style="font-size: 0.8rem; color: var(--text-muted);">0 คน</span>
+        </div>
+        <div id="lbListG1" class="lb-rows"></div>
+      </div>
+
+      <div class="lb-card">
+        <div class="lb-head">
+          <h3>🏆 ตารางอันดับ GAME 02: Cyber Overdrive</h3>
+          <span id="countG2" style="font-size: 0.8rem; color: var(--text-muted);">0 คน</span>
+        </div>
+        <div id="lbListG2" class="lb-rows"></div>
+      </div>
+    </section>
+  </div>
+
+  <script src="lan_sync.js"></script>
+  <script>
+    const STORAGE_KEY_USERS = 'sky_aim_jumper_users_v1';
+    const STORAGE_KEY_SESSION = 'sky_aim_jumper_current_user';
+
+    const guestBox = document.getElementById('guestBox');
+    const loggedBox = document.getElementById('loggedBox');
+    const hubAuthForm = document.getElementById('hubAuthForm');
+    const hubUsername = document.getElementById('hubUsername');
+    const hubPassword = document.getElementById('hubPassword');
+    const hubAuthError = document.getElementById('hubAuthError');
+    const hubCurrentUser = document.getElementById('hubCurrentUser');
+    const hubLogoutBtn = document.getElementById('hubLogoutBtn');
+
+    const myBestG1 = document.getElementById('myBestG1');
+    const myBestG2 = document.getElementById('myBestG2');
+    const topChampG1 = document.getElementById('topChampG1');
+    const topChampG2 = document.getElementById('topChampG2');
+    const lbListG1 = document.getElementById('lbListG1');
+    const lbListG2 = document.getElementById('lbListG2');
+    const countG1 = document.getElementById('countG1');
+    const countG2 = document.getElementById('countG2');
+
+    const lanStatusDot = document.getElementById('lanStatusDot');
+    const lanStatusLabel = document.getElementById('lanStatusLabel');
+    const lanUrlText = document.getElementById('lanUrlText');
+    const copyLanBtn = document.getElementById('copyLanBtn');
+
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"']/g, (m) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[m]));
+    }
+
+    function renderHub() {
+      const users = window.LanSync.getLocalUsers();
+      const sessionName = localStorage.getItem(STORAGE_KEY_SESSION);
+      let currentUser = null;
+
+      if (sessionName) {
+        currentUser = users.find((u) => u.username.toLowerCase() === sessionName.toLowerCase());
+      }
+
+      if (currentUser) {
+        guestBox.classList.add('hidden');
+        loggedBox.classList.remove('hidden');
+        hubCurrentUser.textContent = currentUser.username;
+        myBestG1.textContent = (currentUser.bestScore || 0).toLocaleString();
+        myBestG2.textContent = (currentUser.bestScoreG2 || 0).toLocaleString();
+      } else {
+        guestBox.classList.remove('hidden');
+        loggedBox.classList.add('hidden');
+        myBestG1.textContent = '0';
+        myBestG2.textContent = '0';
+      }
+
+      // จัดอันดับเกม 1
+      const sortedG1 = [...users].sort((a, b) => (b.bestScore || 0) - (a.bestScore || 0));
+      countG1.textContent = `${sortedG1.length} คน`;
+      if (sortedG1.length > 0 && (sortedG1[0].bestScore || 0) > 0) {
+        topChampG1.textContent = `${sortedG1[0].username} (${sortedG1[0].bestScore.toLocaleString()})`;
+      } else {
+        topChampG1.textContent = 'ยังไม่มีสถิติ';
+      }
+
+      lbListG1.innerHTML = sortedG1.length === 0
+        ? '<div style="color: var(--text-muted); text-align: center; padding: 20px;">ยังไม่มีข้อมูลผู้เล่น</div>'
+        : sortedG1.map((u, i) => {
+            const isMe = currentUser && u.username.toLowerCase() === currentUser.username.toLowerCase();
+            const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i + 1}`;
+            return `
+              <div class="lb-row ${isMe ? 'me' : ''}">
+                <span><strong>${medal}</strong> ${escapeHtml(u.username)} ${isMe ? '(คุณ)' : ''}</span>
+                <span class="lb-score">${(u.bestScore || 0).toLocaleString()} คะแนน</span>
+              </div>
+            `;
+          }).join('');
+
+      // จัดอันดับเกม 2
+      const sortedG2 = [...users].sort((a, b) => (b.bestScoreG2 || 0) - (a.bestScoreG2 || 0));
+      countG2.textContent = `${sortedG2.length} คน`;
+      if (sortedG2.length > 0 && (sortedG2[0].bestScoreG2 || 0) > 0) {
+        topChampG2.textContent = `${sortedG2[0].username} (${sortedG2[0].bestScoreG2.toLocaleString()})`;
+      } else {
+        topChampG2.textContent = 'ยังไม่มีสถิติ';
+      }
+
+      lbListG2.innerHTML = sortedG2.length === 0
+        ? '<div style="color: var(--text-muted); text-align: center; padding: 20px;">ยังไม่มีข้อมูลผู้เล่น</div>'
+        : sortedG2.map((u, i) => {
+            const isMe = currentUser && u.username.toLowerCase() === currentUser.username.toLowerCase();
+            const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i + 1}`;
+            const waveBadge = u.bestWaveG2 ? `<small style="color: var(--cyan); margin-left: 6px;">[Wave ${u.bestWaveG2}]</small>` : '';
+            return `
+              <div class="lb-row ${isMe ? 'me' : ''}">
+                <span><strong>${medal}</strong> ${escapeHtml(u.username)} ${isMe ? '(คุณ)' : ''} ${waveBadge}</span>
+                <span class="lb-score">${(u.bestScoreG2 || 0).toLocaleString()} คะแนน</span>
+              </div>
+            `;
+          }).join('');
+    }
+
+    hubAuthForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = hubUsername.value.trim();
+      const pass = hubPassword.value.trim();
+      if (!name || !pass) return;
+
+      const users = window.LanSync.getLocalUsers();
+      const found = users.find((u) => u.username.toLowerCase() === name.toLowerCase());
+      if (found) {
+        if (found.password !== pass) {
+          hubAuthError.textContent = '❌ รหัสผ่านไม่ถูกต้อง!';
+          return;
+        }
+      } else {
+        users.push({
+          username: name,
+          password: pass,
+          bestScore: 0,
+          bestScoreG2: 0,
+          bestWaveG2: 1,
+          updatedAt: Date.now(),
+          updatedAtG2: Date.now()
+        });
+        window.LanSync.pushToLan(users);
+      }
+
+      hubAuthError.textContent = '';
+      localStorage.setItem(STORAGE_KEY_SESSION, name);
+      renderHub();
+    });
+
+    hubLogoutBtn.addEventListener('click', () => {
+      localStorage.removeItem(STORAGE_KEY_SESSION);
+      hubPassword.value = '';
+      renderHub();
+    });
+
+    copyLanBtn.addEventListener('click', () => {
+      const url = lanUrlText.textContent;
+      navigator.clipboard?.writeText(url);
+      copyLanBtn.textContent = '✅ คัดลอกแล้ว!';
+      setTimeout(() => { copyLanBtn.textContent = '📋 คัดลอกลิงก์'; }, 1800);
+    });
+
+    window.LanSync.onUpdate(({ isLanConnected, lanUrl }) => {
+      lanUrlText.textContent = lanUrl;
+      if (isLanConnected) {
+        lanStatusDot.classList.remove('offline');
+        lanStatusLabel.textContent = '🟢 LAN Server ออนไลน์! เปิดลิงก์นี้จากคอม/มือถือเครื่องอื่นได้เลย:';
+      } else {
+        lanStatusDot.classList.add('offline');
+        lanStatusLabel.textContent = 'กำลังเล่นโหมดในเครื่อง (รัน START_LAN_SERVER.bat เพื่อเปิดให้เครื่องอื่นเข้า):';
+      }
+      renderHub();
+    });
+
+    renderHub();
+  </script>
+</body>
+</html>
